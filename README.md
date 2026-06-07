@@ -42,8 +42,9 @@ and how you handle events is your app's job.
 
 ## 2. Installation
 
-The connector is a normal pip package distributed from a private git repo.
-Declare it as a dependency of **your** Frappe app and let bench install it.
+The connector is a normal pip package in a **public** git repo. Declare it as a
+dependency of **your** Frappe app and let bench install it — no auth, deploy key,
+or token required.
 
 In your app's `pyproject.toml`:
 
@@ -62,9 +63,7 @@ bench setup requirements        # installs/updates into the bench's env/
 Notes:
 - Pin to a **tag** (`@v0.1.0`). The wire contract is append-only, so older
   connector versions keep working — upgrade by bumping the tag and redeploying.
-- It is a **private** repo; the bench needs git access. Your benches already
-  pull private `zhiftplatforms` apps, so the existing deploy key / token covers
-  it. No new infrastructure.
+- Public repo: a plain HTTPS clone works on every bench with no credentials.
 - For local development you can install editable: `./env/bin/pip install -e
   /path/to/zhift_ses_connector`.
 - Runtime dependency is just `requests`. The crypto core uses only the stdlib.
