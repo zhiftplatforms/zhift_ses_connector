@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zhift-ses-connector"
+version = "0.1.0"
+description = "Thin connection SDK for the centralized Zhift SES (Postmark) email service. Handles request signing, the wire contract, and inbound relay verification — apps build their own client logic on top."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "AGPL-3.0-only" }
+authors = [{ name = "Zhift Platforms Ltd", email = "hello@zhiftplatforms.com" }]
+dependencies = [
+    "requests>=2.25",
+]
+
+[project.urls]
+Homepage = "https://github.com/zhiftplatforms/zhift_ses_connector"
+
+[tool.setuptools.packages.find]
+include = ["zhift_ses_connector*"]
