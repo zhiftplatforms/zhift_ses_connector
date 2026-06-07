@@ -177,11 +177,15 @@ class ZhiftSESConnector:
         source_name: str = "",
         broadcast_recipient_id: str = "",
         unsubscribe_url: str = "",
+        stream_type: str = "transactional",
     ) -> dict:
         """Send one email. Returns ``{"status": "sent", "message_id": ...}``.
 
-        Raises QuotaExceeded / Suspended / SenderNotVerified / SESAuthError /
-        ZhiftSESError on failure. ``rate_limited`` is retried automatically.
+        ``stream_type`` selects the Postmark stream: "transactional" (default)
+        or "broadcast" (use for marketing/bulk — required by Postmark policy and
+        pairs with List-Unsubscribe). Raises QuotaExceeded / Suspended /
+        SenderNotVerified / SESAuthError / ZhiftSESError on failure;
+        ``rate_limited`` is retried automatically.
         """
         payload = {
             "to": to,
@@ -193,17 +197,19 @@ class ZhiftSESConnector:
             "source_name": source_name,
             "broadcast_recipient_id": broadcast_recipient_id,
             "unsubscribe_url": unsubscribe_url,
+            "stream_type": stream_type,
         }
         return self._call_with_retry(SEND_PATH, payload)
 
-    def send_batch(self, emails: list[dict]) -> dict:
+    def send_batch(self, emails: list[dict], stream_type: str = "transactional") -> dict:
         """Send many emails in one call. ``emails`` is a list of dicts with the
-        same keys as :meth:`send`. Returns
+        same keys as :meth:`send` (each may carry its own ``stream_type`` to
+        override the batch default). Returns
         ``{"status": "completed", "results": [{to, status, message_id|message}, ...]}``
         — inspect per-email ``status`` (the call itself only raises on
         auth/transport/quota failures, not per-recipient errors).
         """
-        return self._call_with_retry(BATCH_PATH, {"emails": emails})
+        return self._call_with_retry(BATCH_PATH, {"emails": emails, "stream_type": stream_type})
 
     def verify_sender(self, identity: str, identity_type: str = "Domain") -> dict:
         """Register a sender domain or email. For a domain, the returned

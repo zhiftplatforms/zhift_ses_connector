@@ -23,7 +23,7 @@ from .connector import (
 from .relay import parse_event, verify_relay
 from .signing import canonical_body, sign, verify
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "ZhiftSESConnector",

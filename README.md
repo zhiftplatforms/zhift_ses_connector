@@ -50,7 +50,7 @@ In your app's `pyproject.toml`:
 
 ```toml
 dependencies = [
-    "zhift-ses-connector @ git+https://github.com/zhiftplatforms/zhift_ses_connector.git@v0.1.0",
+    "zhift-ses-connector @ git+https://github.com/zhiftplatforms/zhift_ses_connector.git@v0.1.1",
 ]
 ```
 
@@ -169,12 +169,15 @@ ses = ZhiftSESConnector(base_url, api_key, signing_secret)
 - `session` — pass a shared `requests.Session` to reuse connections in batch
   jobs.
 
-### `send(*, to, subject, html_body, from_email, from_name="", source_type="Broadcast", source_name="", broadcast_recipient_id="", unsubscribe_url="") -> dict`
+### `send(*, to, subject, html_body, from_email, from_name="", source_type="Broadcast", source_name="", broadcast_recipient_id="", unsubscribe_url="", stream_type="transactional") -> dict`
 Sends one email. Returns `{"status": "sent", "message_id": "..."}`. Raises on
-failure (see §7). All args are keyword-only.
+failure (see §7). All args are keyword-only. `stream_type` is `"transactional"`
+(default) or `"broadcast"` — use `"broadcast"` for marketing/bulk so it goes on
+the Postmark broadcast stream (required for bulk; pairs with `unsubscribe_url`).
 
-### `send_batch(emails: list[dict]) -> dict`
-`emails` is a list of dicts with the same keys as `send`. Returns
+### `send_batch(emails: list[dict], stream_type="transactional") -> dict`
+`emails` is a list of dicts with the same keys as `send` (each may carry its own
+`stream_type` to override the batch default). Returns
 `{"status": "completed", "results": [{"to", "status", "message_id"|"message"}, ...], "total": N}`.
 The call only raises on auth/transport/quota-level failures; **per-recipient
 problems appear as that recipient's `status`** in `results` (`sent`,
